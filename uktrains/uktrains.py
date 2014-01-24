@@ -52,13 +52,14 @@ def search_stations(text):
         yield Station(name=name, code=code)
 
 
-def search_trains(from_name, to_name):
+def search_trains(from_name, to_name, *args):
     """
     Get trains between the given station names.
     """
     return get_trains(
         get_station(from_name),
-        get_station(to_name))
+        get_station(to_name),
+        *args)
 
 
 def get_trains(from_station, to_station, when=None):
