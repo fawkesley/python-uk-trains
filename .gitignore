@@ -1,1 +1,6 @@
 venv
+.*.swp
+*.sqlite
+*.pyc
+build/
+src/
