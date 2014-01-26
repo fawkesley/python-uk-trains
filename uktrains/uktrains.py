@@ -67,9 +67,11 @@ def search_stations(text):
 
     stations_json = _http_get(_SEARCH_URL.format(search=text)).read()
 
+    stations = []
     for result in json.loads(stations_json):
         code, name, _, _ = result
-        yield Station(name=name, code=code)
+        stations.append(Station(name=name, code=code))
+    return stations
 
 
 def _http_get(url):
@@ -101,8 +103,10 @@ def get_trains(from_station, to_station, when=None):
     ).read()
 
     root = lxml.html.fromstring(html)
+    journeys = []
     for tr in root.cssselect('table#oft > tbody > tr.mtx'):
-        yield _parse_station_from_tr(tr)
+        journeys.append(_parse_station_from_tr(tr))
+    return journeys
 
 
 def _parse_station_from_tr(tr):
