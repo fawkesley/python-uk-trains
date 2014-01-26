@@ -5,10 +5,14 @@ from __future__ import unicode_literals
 
 import datetime
 import json
-import requests
-import requests_cache
+import logging
+import sys
 
 from collections import namedtuple
+from cStringIO import StringIO
+
+import requests
+import requests_cache
 
 import lxml.html
 
@@ -34,6 +38,21 @@ class Journey(namedtuple('Journey',
     pass
 
 
+def main(phrase):
+    logging.basicConfig(level=logging.INFO)
+    requests_cache.install_cache()
+    parts = phrase.split(' to ', 1)
+    if len(parts) != 2:
+        print("Try eg 'liverpool to london euston'")
+        sys.exit(2)
+
+    depart, arrive = parts
+
+    for journey in search_trains(depart, arrive,
+                                 datetime.datetime(2014, 1, 25, 9, 0)):
+        print(journey)
+
+
 def get_station(station_name):
     """
     Return the single most likely station for this name.
@@ -45,11 +64,18 @@ def search_stations(text):
     """
     Yields Station objects for the given station name provided.
     """
-    response = requests.get(_SEARCH_URL.format(search=text))
-    response.raise_for_status()
-    for result in json.loads(response.content):
+
+    stations_json = _http_get(_SEARCH_URL.format(search=text)).read()
+
+    for result in json.loads(stations_json):
         code, name, _, _ = result
         yield Station(name=name, code=code)
+
+
+def _http_get(url):
+    response = requests.get(url)
+    response.raise_for_status()
+    return StringIO(response.content)
 
 
 def search_trains(from_name, to_name, *args):
@@ -66,14 +92,15 @@ def get_trains(from_station, to_station, when=None):
     if when is None:
         when = datetime.datetime.now()
 
-    response = requests.get(_TRAINS_URL.format(
-        from_=from_station.get_code_for_search(),
-        to=to_station.get_code_for_search(),
-        DDMMYY=when.strftime('%d%m%y'),
-        HHMM=when.strftime('%H%M')))
+    html = _http_get(
+        requests.get(_TRAINS_URL.format(
+            from_=from_station.get_code_for_search(),
+            to=to_station.get_code_for_search(),
+            DDMMYY=when.strftime('%d%m%y'),
+            HHMM=when.strftime('%H%M')))
+    ).read()
 
-    response.raise_for_status()
-    root = lxml.html.fromstring(response.content)
+    root = lxml.html.fromstring(html)
     for tr in root.cssselect('table#oft > tbody > tr.mtx'):
         yield _parse_station_from_tr(tr)
 
@@ -101,5 +128,4 @@ def _parse_station_from_tr(tr):
 
 
 if __name__ == '__main__':
-    requests_cache.install_cache()
-    print(list(search_trains('london euston', 'liverpool lime street')))
+    main(' '.join(sys.argv[1:]))
