@@ -99,11 +99,11 @@ def get_trains(from_station, to_station, when=None):
         when = datetime.datetime.now()
 
     html = _http_get(
-        requests.get(_TRAINS_URL.format(
+        _TRAINS_URL.format(
             from_=from_station.get_code_for_search(),
             to=to_station.get_code_for_search(),
             DDMMYY=when.strftime('%d%m%y'),
-            HHMM=when.strftime('%H%M')))
+            HHMM=when.strftime('%H%M'))
     ).read()
 
     root = lxml.html.fromstring(html)
