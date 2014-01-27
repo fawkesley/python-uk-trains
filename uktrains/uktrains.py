@@ -17,7 +17,8 @@ import requests_cache
 
 import lxml.html
 
-__all__ = ['search_trains', 'get_trains', 'get_station', 'search_stations']
+__all__ = ['search_trains', 'get_trains', 'get_station', 'search_stations',
+           'Journey', 'Station']
 
 
 _SEARCH_URL = 'http://ojp.nationalrail.co.uk/find/stationsDLRLU/{search}'
