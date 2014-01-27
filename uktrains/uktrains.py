@@ -40,7 +40,7 @@ class Journey(namedtuple('Journey',
 
 
 def main(phrase):
-    logging.basicConfig(level=logging.INFO)
+    logging.basicConfig(level=logging.DEBUG)
     requests_cache.install_cache()
     parts = phrase.split(' to ', 1)
     if len(parts) != 2:
@@ -58,7 +58,9 @@ def get_station(station_name):
     """
     Return the single most likely station for this name.
     """
-    return next(search_stations(station_name))  # TODO: don't just get the 1st
+    station = search_stations(station_name)[0]  # TODO: don't just get 1st
+    logging.debug("'{}' => '{}'".format(station_name, station))
+    return station
 
 
 def search_stations(text):
@@ -76,6 +78,7 @@ def search_stations(text):
 
 
 def _http_get(url):
+    logging.debug(url)
     response = requests.get(url)
     response.raise_for_status()
     return StringIO(response.content)
