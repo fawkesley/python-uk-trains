@@ -6,6 +6,7 @@ from __future__ import unicode_literals
 import datetime
 import json
 import logging
+import re
 import sys
 
 from collections import namedtuple
@@ -34,7 +35,7 @@ class Station(namedtuple('Station', 'name,code')):
 
 class Journey(namedtuple('Journey',
                          ('depart_station,arrive_station,'
-                          'depart_time,arrive_time,changes,status'))):
+                          'depart_time,arrive_time,platform,changes,status'))):
     pass
 
 
@@ -114,22 +115,55 @@ def _parse_station_from_tr(tr):
     try:
         depart_time = tr.cssselect('td.dep')[0].text_content().strip()
         arrive_time = tr.cssselect('td.arr')[0].text_content().strip()
-        from_code = tr.cssselect('td.from abbr')[0].text_content().strip()
-        to_code = tr.cssselect('td.to abbr')[0].text_content().strip()
+        from_name, from_code = _parse_name_code(
+            tr.cssselect('td.from')[0].text_content())
+        to_name, to_code = _parse_name_code(
+            tr.cssselect('td.to')[0].text_content())
+
         changes = tr.cssselect('td.chg')[0].text_content().strip()
         status = tr.cssselect('td.status')[0].text_content().strip()
+        try:
+            platform_span = tr.cssselect('td.from > span.ctf-plat')[0]
+            from_platform = _parse_platform(platform_span.text_content())
+        except IndexError:
+            from_platform = None
+
     except IndexError:
         print(lxml.html.tostring(tr))
         raise
 
     return Journey(
-        depart_station=from_code,
-        arrive_station=to_code,
+        depart_station=Station(from_name, from_code),
+        arrive_station=Station(to_name, to_code),
         depart_time=depart_time,
         arrive_time=arrive_time,
+        platform=from_platform,
         changes=changes,
         status=status)
 
+def _parse_name_code(station):
+    """
+    >>> _parse_name_code(' \n West Kirby  [WKI]\n \t \n')
+    ('West Kirby', 'WKI')
+    """
+    match = re.match('[ \t\n]*(?P<name>.+) +\[(?P<code>[A-Z]{3})\][ \t\n]*',
+                     station)
+    if match:
+        return match.group('name'), match.group('code')
+    logging.warn("Failed to parse: '{}'".format(station))
+    return None
+
+
+def _parse_platform(span_content):
+    """
+    >>> _parse_platform('  Platform\\n\\t\\t\\t\\t8  ')
+    8
+    """
+    match = re.search(r'(\d+)', span_content)
+    if match:
+        return int(match.group(0))
+    logging.warn("Failed to parse: '{}'".format(span_content))
+    return None
 
 if __name__ == '__main__':
     main(' '.join(sys.argv[1:]))
