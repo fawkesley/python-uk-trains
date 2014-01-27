@@ -144,6 +144,7 @@ def _parse_station_from_tr(tr):
         changes=changes,
         status=status)
 
+
 def _parse_name_code(station):
     """
     >>> _parse_name_code(' \n West Kirby  [WKI]\n \t \n')
@@ -152,7 +153,7 @@ def _parse_name_code(station):
     match = re.match('[ \t\n]*(?P<name>.+) +\[(?P<code>[A-Z]{3})\][ \t\n]*',
                      station)
     if match:
-        return match.group('name'), match.group('code')
+        return match.group('name').strip(), match.group('code').strip()
     logging.warn("Failed to parse: '{}'".format(station))
     return None
 
