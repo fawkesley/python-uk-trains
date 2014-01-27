@@ -49,8 +49,7 @@ def main(phrase):
 
     depart, arrive = parts
 
-    for journey in search_trains(depart, arrive,
-                                 datetime.datetime(2014, 1, 25, 9, 0)):
+    for journey in search_trains(depart, arrive):
         print(journey)
 
 
