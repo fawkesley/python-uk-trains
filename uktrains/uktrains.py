@@ -21,7 +21,7 @@ __all__ = ['search_trains', 'get_trains', 'get_station', 'search_stations',
            'Journey', 'Station']
 
 
-_SEARCH_URL = 'http://ojp.nationalrail.co.uk/find/stationsDLRLU/{search}'
+_SEARCH_URL = 'http://ojp.nationalrail.co.uk/find/stations/{search}'
 _TRAINS_URL = ('http://ojp.nationalrail.co.uk/service/timesandfares/'
                '{from_}/{to}/{DDMMYY}/{HHMM}/dep?excludeslowertrains')
 
