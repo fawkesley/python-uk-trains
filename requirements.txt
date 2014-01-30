@@ -1,3 +1,4 @@
 lxml==3.2.0
-requests
-cssselect
+requests==2.1.0
+requests-cache==0.4.4
+cssselect==0.9.1
