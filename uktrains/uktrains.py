@@ -72,7 +72,7 @@ def search_stations(text):
 
     stations = []
     for result in json.loads(stations_json):
-        code, name, _, _ = result
+        code, name, _ = result
         stations.append(Station(name=name, code=code))
     return stations
 

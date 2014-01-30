@@ -20,6 +20,14 @@ def sample_data(filename):
 
 
 @mock.patch('uktrains.uktrains._http_get')
+def test_decode_search_results(mock_http_get):
+    with sample_data('01_station_search_results.json') as f:
+        mock_http_get.return_value =f
+        stations = search_stations('LIV')
+        assert_equal(9, len(stations))
+
+
+@mock.patch('uktrains.uktrains._http_get')
 def test_split_table(mock_http_get):
     with sample_data('03_split_tables.html') as f:
         mock_http_get.return_value = f
