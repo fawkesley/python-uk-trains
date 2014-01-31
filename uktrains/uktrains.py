@@ -123,7 +123,7 @@ def _parse_station_from_tr(tr):
         to_name, to_code = _parse_name_code(
             tr.cssselect('td.to')[0].text_content())
 
-        changes = tr.cssselect('td.chg')[0].text_content().strip()
+        changes = int(tr.cssselect('td.chg')[0].text_content().strip())
         status = tr.cssselect('td.status')[0].text_content().strip()
         try:
             platform_span = tr.cssselect('td.from > span.ctf-plat')[0]
