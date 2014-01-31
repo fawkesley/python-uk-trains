@@ -69,6 +69,14 @@ def test_parse_journeys(mock_http_get):
 
 
 @mock.patch('uktrains.uktrains._http_get')
+def test_newlines_removed_from_status(mock_http_get):
+    with sample_data('05_journey_split_status.html') as f:
+        mock_http_get.return_value = f
+        journeys = get_trains(Station('Bar', 'BAR'), Station('Foo', 'FOO'))
+        assert_equal('disrupted', journeys[0].status)
+
+
+@mock.patch('uktrains.uktrains._http_get')
 def test_search_stations_returns_just_rail_stationsn(mock_http_get):
     mock_http_get.return_value = StringIO("[]")
     search_stations('LIV')

@@ -124,7 +124,7 @@ def _parse_station_from_tr(tr):
             tr.cssselect('td.to')[0].text_content())
 
         changes = int(tr.cssselect('td.chg')[0].text_content().strip())
-        status = tr.cssselect('td.status')[0].text_content().strip()
+        status = _parse_status(tr.cssselect('td.status')[0].text_content())
         try:
             platform_span = tr.cssselect('td.from > span.ctf-plat')[0]
             from_platform = _parse_platform(platform_span.text_content())
@@ -168,6 +168,14 @@ def _parse_platform(span_content):
         return int(match.group(0))
     logging.warn("Failed to parse: '{}'".format(span_content))
     return None
+
+
+def _parse_status(td_content):
+    """
+    >>> _parse_status('disrupted\\n\\nblah')
+    u'disrupted'
+    """
+    return td_content.strip().split('\n')[0].strip()
 
 if __name__ == '__main__':
     main(' '.join(sys.argv[1:]))
