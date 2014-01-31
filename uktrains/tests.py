@@ -5,7 +5,7 @@ from nose.tools import assert_equal
 
 from cStringIO import StringIO
 
-from uktrains import get_trains, Station, search_stations
+from uktrains import get_trains, Journey, Station, search_stations
 
 _DATA = pjoin(dirname(__file__), 'sample_data')
 
@@ -33,6 +33,39 @@ def test_split_table(mock_http_get):
         mock_http_get.return_value = f
         journeys = get_trains(Station('Bar', 'BAR'), Station('Foo', 'FOO'))
         assert_equal(None, journeys)
+
+
+@mock.patch('uktrains.uktrains._http_get')
+def test_parse_journeys(mock_http_get):
+    with sample_data('02_search_results.html') as f:
+        mock_http_get.return_value = f
+        journeys = get_trains(Station('Bar', 'BAR'), Station('Foo', 'FOO'))
+        assert_equal(5, len(journeys))
+        assert_equal(
+            Journey(
+                depart_station=Station(name='Liverpool Lime Street',
+                                       code='LIV'),
+                arrive_station=Station(name='London Euston',
+                                       code='EUS'),
+                depart_time='19:48',
+                arrive_time='22:09',
+                platform=None,
+                changes=0,
+                status='on time'),
+            journeys[0])
+
+        assert_equal(
+            Journey(
+                depart_station=Station(name='Liverpool Lime Street',
+                                       code='LIV'),
+                arrive_station=Station(name='London Euston',
+                                       code='EUS'),
+                depart_time='23:43',
+                arrive_time='07:38',
+                platform=None,
+                changes=2,
+                status=''),
+            journeys[4])
 
 
 @mock.patch('uktrains.uktrains._http_get')
