@@ -28,7 +28,7 @@ def test_decode_search_results(mock_http_get):
 
 
 @mock.patch('uktrains.uktrains._http_get')
-def test_split_table(mock_http_get):
+def _test_split_table(mock_http_get):
     with sample_data('03_split_tables.html') as f:
         mock_http_get.return_value = f
         journeys = get_trains(Station('Bar', 'BAR'), Station('Foo', 'FOO'))
