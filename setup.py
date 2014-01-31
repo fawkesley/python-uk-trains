@@ -7,7 +7,7 @@ Search for UK stations and train times.
 
 setup(
     name='uktrains',
-    version='0.0.5',
+    version='0.0.6',
     description="Search for UK stations and train times.",
     long_description=long_desc,
     classifiers=[
@@ -29,8 +29,8 @@ setup(
     install_requires=[
         'requests',
         'requests_cache',
-        'mock',
-        'lxml'
+        'lxml',
+        'cssselect',
     ],
     tests_require=[],
 )
