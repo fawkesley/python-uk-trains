@@ -28,3 +28,5 @@ to_station = uktrains.get_station('euston')
 
 uktrains.get_trains(from_station, to_station)
 ```
+[![Build Status](https://travis-ci.org/paulfurley/python-uk-trains.png?branch=master)](https://travis-ci.org/paulfurley/python-uk-trains)
+
