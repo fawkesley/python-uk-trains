@@ -84,14 +84,14 @@ def _http_get(url):
     return StringIO(response.content)
 
 
-def search_trains(from_name, to_name, *args):
+def search_trains(from_name, to_name, **kwargs):
     """
     Get trains between the given station names.
     """
     return get_trains(
         get_station(from_name),
         get_station(to_name),
-        *args)
+        **kwargs)
 
 
 def get_trains(from_station, to_station, when=None):
