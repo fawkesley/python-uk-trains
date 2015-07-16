@@ -28,8 +28,8 @@ _TRAINS_URL = ('http://ojp.nationalrail.co.uk/service/timesandfares/'
 
 class Station(namedtuple('Station', 'name,code')):
     def get_code_for_search(self):
-        if self.code == 'All Stations':
-            return self.name.lower()  # ie 'Liverpool'
+        if re.match('\d+', self.code):  # ie '108'
+            return self.name.lower()  # ie 'liverpool'
         else:
             return self.code.upper()  # ie 'LIV'
 
