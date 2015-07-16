@@ -10,7 +10,7 @@ import re
 import sys
 
 from collections import namedtuple
-from cStringIO import StringIO
+from six import StringIO
 
 import requests
 import requests_cache
@@ -81,7 +81,7 @@ def _http_get(url):
     logging.debug(url)
     response = requests.get(url)
     response.raise_for_status()
-    return StringIO(response.content)
+    return StringIO(response.text)
 
 
 def search_trains(from_name, to_name, **kwargs):
