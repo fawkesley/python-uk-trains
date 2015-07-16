@@ -1,9 +1,11 @@
+import codecs
+
 import mock
 from contextlib import contextmanager
 from os.path import dirname, join as pjoin
 from nose.tools import assert_equal
 
-from cStringIO import StringIO
+from six import StringIO
 
 from uktrains import get_trains, Journey, Station, search_stations
 
@@ -13,7 +15,7 @@ _DATA = pjoin(dirname(__file__), 'sample_data')
 @contextmanager
 def sample_data(filename):
     try:
-        with open(pjoin(_DATA, filename), 'r') as f:
+        with open(pjoin(_DATA, filename), 'rb') as f:
             yield f
     finally:
         pass
@@ -22,7 +24,7 @@ def sample_data(filename):
 @mock.patch('uktrains.uktrains._http_get')
 def test_decode_search_results(mock_http_get):
     with sample_data('01_station_search_results.json') as f:
-        mock_http_get.return_value =f
+        mock_http_get.return_value = StringIO(f.read().decode('utf-8'))
         stations = search_stations('LIV')
         assert_equal(9, len(stations))
 
