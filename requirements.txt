@@ -1,4 +1,4 @@
-lxml==4.2.0
+lxml==4.2.1
 requests==2.18.4
 requests-cache==0.4.13
 cssselect==1.0.3
